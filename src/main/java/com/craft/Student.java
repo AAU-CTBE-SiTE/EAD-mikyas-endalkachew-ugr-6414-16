@@ -2,38 +2,38 @@ package com.craft;
 
 import lombok.Data;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Data
 @ToString
+@Component
 public class Student {
+
     private int id;
     private String name;
     private int age;
 
-//    private String city;
-//    private String country;
-private Address address;
+    private Address address;
+    private List<Subject> subjects;
 
-    // public Student() {
-    //     System.out.println("Student Constructor Called");
-    // }
-
-//    public Student(int id, String name, int age) {
-//        this.id = id;
-//        this.name = name;
-//        this.age = age;
-//
-//        System.out.println("Student Parameterized Constructor Called");
-//    }
-
-    public Student(int id, String name, int age, Address address) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
+    @Autowired
+    public Student(Address address, List<Subject> subjects) {
+        this.id = 101;
+        this.name = "John Doe";
+        this.age = 20;
         this.address = address;
+        this.subjects = subjects;
     }
-//
-//    public void getDetails() {
-//        System.out.println("Student Details " + this);
-//    }
+
+    public void getDetails() {
+        System.out.println("Student Name: " + name);
+        System.out.println("Address: " + address);
+
+        for (Subject subject : subjects) {
+            System.out.println("Subject: " + subject.getSubjectName());
+        }
+    }
 }

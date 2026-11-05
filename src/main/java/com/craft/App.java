@@ -1,16 +1,31 @@
 package com.craft;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+//import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class App {
 
     public static void main(String[] args) {
 
-        ApplicationContext context = new
-                ClassPathXmlApplicationContext("beansConfig.xml");
-        Student student = context.getBean("student", Student.class);
+//        ApplicationContext context = new
+//                ClassPathXmlApplicationContext("beansConfig.xml");
 
-        System.out.println(student);
+        ApplicationContext context =
+                new AnnotationConfigApplicationContext(AppConfig.class);
+
+        Student student1 = context.getBean("student", Student.class);
+        Student student2 = context.getBean("student", Student.class);
+
+//        System.out.println(student1 == student2);
+
+        System.out.println(student1);
+
+        student1.getDetails();
+
+//        student1.setName("John Doe");
+
+//        System.out.println(student2.getName());
     }
 }
