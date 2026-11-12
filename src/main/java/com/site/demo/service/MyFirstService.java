@@ -34,4 +34,8 @@ public class MyFirstService {
     public void tellAStory() {
         System.out.println("The dependency is saying: " +  myFirstClass.sayHello());
     }
+
+    public void throwException() {
+        throw new RuntimeException("Something went wrong");
+    }
 }

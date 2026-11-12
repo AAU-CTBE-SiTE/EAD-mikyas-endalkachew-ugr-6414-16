@@ -16,5 +16,6 @@ public class DemoApplication {
 		myFirstService.tellAStory();
 		System.out.println(myFirstService.getCustomPropertyFromAnotherFile());
 		System.out.println(myFirstService.getCustomPropertyFromAnotherFile2());
+		myFirstService.throwException();
 	}
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class LoggingAspect {
     @Before("execution(* com.site.demo.service.*.*(..))")
     public void logBefore() {
-        System.out.println("A method inside MyFirstService is about to be executed");
+        System.out.println("\nA method inside MyFirstService is about to be executed");
     }
 
     @After("execution(* com.site.demo.service.MyFirstService.tellAStory(..))")
@@ -25,6 +25,18 @@ public class LoggingAspect {
     public void logAfterReturning(Object result) {
 
         System.out.println("Method returned: " + result);
+
+    }
+
+    @AfterThrowing(
+            pointcut = "execution(* com.site.demo.service.*.*(..))",
+            throwing = "exception"
+    )
+    public void logAfterThrowing(Exception exception) {
+
+        System.out.println(
+                "An exception occurred: " + exception.getMessage()
+        );
 
     }
 
