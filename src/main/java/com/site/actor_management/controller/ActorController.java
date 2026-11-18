@@ -1,81 +1,98 @@
+
 package com.site.actor_management.controller;
 
 import com.site.actor_management.model.Actor;
+import com.site.actor_management.repository.ActorRepository;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1")
 public class ActorController {
 
-    List<Actor> actors = new ArrayList<>();
+    private final ActorRepository actorRepository;
 
-    public ActorController() {
-        actors.add(new Actor(1, "John Snow", "Game of Thrones"));
-        actors.add(new Actor(2, "Jane Smith", "Mystery Island"));
-
+    public ActorController(ActorRepository actorRepository) {
+        this.actorRepository = actorRepository;
     }
 
+    // GET: Retrieve all actors
     @GetMapping("/actor")
     public List<Actor> getActorDetails() {
-        return actors;
+        return actorRepository.findAll();
     }
 
+    // GET: Retrieve actor by ID
     @GetMapping("/actor/{id}")
-    public Actor getActorById(@PathVariable int id) {
-        for(Actor actor : actors) {
-            if(actor.getId() == id) {
-                return actor;
-            }
-        }
-        return null;
+    public ResponseEntity<Actor> getActorById(@PathVariable int id) {
+
+        return actorRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
+    // POST: Add new actor
     @PostMapping("/actor")
     public Actor addActor(@RequestBody Actor newActor) {
-        actors.add(newActor);
-        return newActor;
+        return actorRepository.save(newActor);
     }
 
+    // PUT: Update actor
     @PutMapping("/actor/{id}")
-    public Actor updateActor(@PathVariable int id, @RequestBody Actor updatedActor) {
-        for (Actor actor : actors) {
-            if (actor.getId() == id) {
-                actor.setName(updatedActor.getName());
-                actor.setMovieName(updatedActor.getMovieName());
-                return actor;
-            }
-        }
-        return null;
+    public ResponseEntity<Actor> updateActor(
+            @PathVariable int id,
+            @RequestBody Actor updatedActor) {
+
+        return actorRepository.findById(id)
+                .map(actor -> {
+
+                    actor.setName(updatedActor.getName());
+                    actor.setMovieName(updatedActor.getMovieName());
+
+                    Actor savedActor = actorRepository.save(actor);
+
+                    return ResponseEntity.ok(savedActor);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
+    // PATCH: Partially update actor
     @PatchMapping("/actor/{id}")
-    public Actor patchActor(@PathVariable int id, @RequestBody Actor partialActor) {
-        for (Actor actor : actors) {
-            if (actor.getId() == id) {
-                if(partialActor.getName() != null) {
-                    actor.setName(partialActor.getName());
-                }
+    public ResponseEntity<Actor> patchActor(
+            @PathVariable int id,
+            @RequestBody Actor partialActor) {
 
-                if(partialActor.getMovieName() != null) {
-                    actor.setMovieName(partialActor.getMovieName());
-                }
-                return actor;
-            }
-        }
-        return null;
+        return actorRepository.findById(id)
+                .map(actor -> {
+
+                    if (partialActor.getName() != null) {
+                        actor.setName(partialActor.getName());
+                    }
+
+                    if (partialActor.getMovieName() != null) {
+                        actor.setMovieName(partialActor.getMovieName());
+                    }
+
+                    Actor savedActor = actorRepository.save(actor);
+
+                    return ResponseEntity.ok(savedActor);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
+    // DELETE: Delete actor
     @DeleteMapping("/actor/{id}")
-    public String deleteActor(@PathVariable int id) {
-        for (Actor actor : actors) {
-            if (actor.getId() == id) {
-                actors.remove(actor);
-                return "Actor has been deleted";
-            }
+    public ResponseEntity<Void> deleteActor(@PathVariable int id) {
+
+        if (!actorRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
         }
-        return "Error deleting Actor";
+
+        actorRepository.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
